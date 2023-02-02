@@ -1,0 +1,141 @@
+---------------------------------------- CREATE USER ------------------------------------------------------
+0:: conn /as sysdba
+
+1:: CREATE USER project IDENTIFIED BY 123456;
+
+2:: GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE,CREATE VIEW to project;
+
+3:: ALTER USER project QUOTA 50m ON SYSTEM; 
+
+4:: CONN project;
+-------------------------------------- CREATE TABLES ----------------------------------------------------
+
+1) 
+CREATE TABLE Shipping(
+Quantity  Int,
+DATE_SHIP date,
+ship_id number(10)  PRIMARY KEY,
+Commerical_Register varchar(max),
+store_id  number(10));
+
+2)
+CREATE TABLE Store(
+store_id number(10) PRIMARY KEY,
+pro_id number(5),
+ship_id Int,
+num_product  Int,
+sold_product Int );
+
+3)
+CREATE TABLE Product(
+price Int,
+pro_id number(10) PRIMARY KEY,
+name varchar(30),
+brand varchar(30));
+
+4)
+CREATE TABLE Payment(
+Bill Int,
+pro_id number(10),
+pay_method varchar(20),
+customer_id number(10),
+pay_id  number(10)  PRIMARY KEY);
+
+5)
+CREATE TABLE Customer(
+membership  number(10),
+name varchar(30),
+sex varchar(1),
+Address varchar(30);
+phone number(10),
+costumer_id number(10) PRIMARY KEY);
+
+6)
+CREATE TABLE Delivery(
+DELIVEY_Date date,
+pay_id number(10) 
+order_id number(10) PRIMARY KEY,
+zip_code  number(10),
+order_status   varchar(1));
+
+7)
+CREATE TABLE Countries(
+zip_code number(10) PRIMARY KEY,
+Address varchar(30),
+order_id number(10));
+
+------------------------------------ CREATE CONSTRAINT -----------------------------------------------
+1)
+alter table Shipping add(
+CONSTRAINT store_id_fk FOREIGN KEY(store_id) references Store(store_id));
+
+2)
+alter table Store add(
+CONSTRAINT pro_id_fk FOREIGN KEY(pro_id) references Product(pro_id),
+ CONSTRAINT ship_id_fk FOREIGN KEY(ship_id) references Shipping(ship_id));
+
+3)
+alter table Payment add(
+CONSTRAINT pro_id_fk1 FOREIGN KEY(pro_id) references Product(pro_id),
+CONSTRAINT customer_id_fk FOREIGN KEY(customer_id) references Customer(COSTUMER_ID));
+
+4)
+alter table Delivery add(
+CONSTRAINT pay_id_fk FOREIGN KEY(pay_id) references Payment(pay_id));	
+
+5)
+alter table Countries add(	
+CONSTRAINT order_id_fk FOREIGN KEY(order_id) references Delivery(order_id));
+
+---------------------------------------- INSERTS ------------------------------------------------------
+insert into shipping values (5 ,to_date('2022-07-13' ,'YYYY-MM-DD') ,00001,null,11111);
+insert into shipping values (30 ,to_date('2021-05-10' ,'YYYY-MM-DD') ,00005 ,exists ,11112);	
+insert into shipping values ( 75,to_date('2019-02-25','YYYY-MM-DD') ,00010 ,'not_exists' ,11125);
+insert into shipping values ( 265,to_date('2003-08-18','YYYY-MM-DD') ,00324 ,'exists' ,11235);
+
+***********************************************************************************
+
+insert into Store  values ( 11111,11122 ,00001 , 120,50);
+insert into Store  values (11112 ,12354 ,00005 ,500 ,350);
+insert into Store  values ( 11125,00051,00010 ,365 ,210);
+insert into Store  values ( 11235 ,00587 ,00324 ,598 ,400);
+
+***********************************************************************************
+
+insert into Product  values (20 ,11122 ,'SCARF' ,'Groupon');
+insert into Product  values ( 58,12354 ,'T_SHIRT' ,'ADIDAS');
+insert into Product  values ( 99, 00051,'SKIRT' ,'H&M');
+insert into Product  values ( 288,00587,'Dress' ,'ZARA');
+ 
+***********************************************************************************
+ 
+insert into Payment  values ( 1200,00587 ,'BANK' ,02586,564978);
+insert into Payment  values (500 ,00051 ,'PAYPAL' ,00025 ,32169);
+insert into Payment  values (357 ,12354 ,'BANK' ,00598 ,26487);
+insert into Payment  values ( 23,11122 ,'BANK' ,00001 ,325498);
+
+***********************************************************************************
+
+insert into Customer  values ( 87987,'ALI' ,'M' ,'GAZA' ,0599218756 ,00001);
+insert into Customer  values ( 32547,'RANA' ,'F' ,'EGYPT' ,0113259854 ,00025);
+insert into Customer  values ( 58746,'WALEED' ,'M' ,'EMARAT' , 9712589517,00598);
+insert into Customer  values (65974 ,'MAHA' ,'F' ,'JORDAN' ,9623587691 ,02586);
+
+***********************************************************************************
+
+insert into Delivery  values (to_date('2021-08-13' ,'YYYY-MM-DD') ,325498 ,1587 ,00970 ,'Y');
+insert into Delivery  values (to_date('2023-05-10' ,'YYYY-MM-DD') ,26487 ,1254 ,00587 ,'N');
+insert into Delivery  values (to_date('2018-11-01' ,'YYYY-MM-DD') ,32169 , 1025,00972 ,'Y');
+insert into Delivery  values (to_date('2019-12-25' ,'YYYY-MM-DD') ,564978 ,1003 ,00584 ,'N');
+
+***********************************************************************************
+
+insert into Countries  values (00970 ,'GAZA' ,1003 );
+insert into Countries  values (00587 ,'LONDON' ,1025 );
+insert into Countries  values (00972 ,'PALESTINE' ,1254 );
+insert into Countries  values ( 00584,'JORDAN' ,1587 );
+
+
+
+
+
